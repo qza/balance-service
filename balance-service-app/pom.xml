@@ -9,13 +9,27 @@
         <version>1.0-SNAPSHOT</version>
     </parent>
 
-    <packaging>war</packaging>
+    <packaging>jar</packaging>
 
     <artifactId>balance-service-app</artifactId>
     <name>balance-service-app</name>
 
+    <dependencies>
+
+        <dependency>
+            <groupId>org.koko</groupId>
+            <artifactId>balance-service-api</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+    </dependencies>
+
     <build>
-        <finalName>balance-service-app</finalName>
+
+        <plugins>
+
+        </plugins>
+
     </build>
 
 </project>

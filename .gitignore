@@ -1,6 +1,8 @@
 # Created by .ignore support plugin (hsz.mobi)
 ### Java template
 *.class
+**/target
+**/log
 
 # Mobile Tools for Java (J2ME)
 .mtj.tmp/
@@ -13,6 +15,7 @@
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
 
+/balance-service-app/dependency-reduced-pom.xml
 #idea files
 .idea
 *.iml
