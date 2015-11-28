@@ -7,4 +7,4 @@ cache:
     - $HOME/.m2
 
 after_success:
-  - mvn -B cobertura:cobertura coveralls:report
+  - mvn clean jacoco:report coveralls:report
