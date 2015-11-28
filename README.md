@@ -2,6 +2,7 @@ Balance service with Dropwizard
 ===============================
 
 [![Build Status](https://travis-ci.org/qza/balance-service.png?branch=master)](https://travis-ci.org/qza/balance-service)
+[![Coverage Status](https://coveralls.io/repos/qza/balance-service/badge.svg?branch=master&service=github)](https://coveralls.io/github/qza/balance-service?branch=master)
 
 Start application with bundled server
 ---
