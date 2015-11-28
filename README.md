@@ -4,23 +4,28 @@ Balance service with Dropwizard
 Start application with bundled server
 ---
 
+'''
 mvn clean install
 cd balance-service-app
 java -jar target/balance-service-app-1.0-SNAPSHOT.jar server app.yml
+'''
 
-Create initial balance for user jack with value $44,300,200.00
+Place initial balance
 ---
 
+'''
 $ curl -i -X PUT "http://localhost:8080/balances/jack?balance=%2444%2C300%2C200.00"
 
 HTTP/1.1 201 Created
 Date: Sat, 28 Nov 2015 15:31:39 GMT
 Location: http://localhost:8080/balances/jack
 Content-Length: 0
+'''
 
-Update balance for jack
+Update balance
 ---
 
+'''
 $ curl -i -X PUT "http://localhost:8080/balances/jack?balance=%2444%2C300%2C300.00"
 
 HTTP/1.1 200 OK
@@ -29,10 +34,12 @@ Content-Type: application/json
 Content-Length: 16
 
 "/balances/jack"
+'''
 
 Get balance
 ---
 
+'''
 $ curl -i "http://localhost:8080/balances/jack"
 
 HTTP/1.1 200 OK
@@ -42,10 +49,12 @@ Vary: Accept-Encoding
 Content-Length: 94
 
 {"requestId":9,"name":"jack","balance":44300300,"message":"Current balance is $44,300,300.00"}
+'''
 
 View balance
 ---
 
+'''
 $ curl -H "Accept: text/html" -i "http://localhost:8080/balances/jack"
 
 HTTP/1.1 200 OK
@@ -65,10 +74,12 @@ Content-Length: 236
         </footer>
     </body>
 </html>
+'''
 
 Check health
 ---
 
+'''
 $ curl -i http://localhost:8081/healthcheck
 
 HTTP/1.1 200 OK
@@ -79,3 +90,4 @@ Vary: Accept-Encoding
 Content-Length: 60
 
 {"deadlocks":{"healthy":true},"repository":{"healthy":true}}
+'''
