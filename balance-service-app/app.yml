@@ -13,3 +13,8 @@ logging:
         archivedLogFilenamePattern: ./log/balance-service-%d.log.gz
         archivedFileCount: 7
         timeZone: UTC
+
+views:
+  .ftl:
+    strict_syntax: yes
+

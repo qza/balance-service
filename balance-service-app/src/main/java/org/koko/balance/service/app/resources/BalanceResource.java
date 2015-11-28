@@ -6,6 +6,7 @@ import org.hibernate.validator.constraints.NotEmpty;
 import org.koko.balance.service.api.BalanceResponse;
 import org.koko.balance.service.app.data.BalanceRepository;
 
+import org.koko.balance.service.app.views.BalanceView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,7 +27,6 @@ import java.util.concurrent.atomic.AtomicLong;
  * Created on 11/28/2015.
  */
 @Path("/balances/{name}")
-@Produces(MediaType.APPLICATION_JSON)
 public class BalanceResource {
 
     private static final Logger log = LoggerFactory.getLogger(BalanceResource.class);
@@ -45,6 +45,7 @@ public class BalanceResource {
 
     @GET
     @Timed
+    @Produces(MediaType.APPLICATION_JSON)
     public BalanceResponse get(@PathParam("name") @NotEmpty String name) {
 
         Long requestId = requestIdGen.incrementAndGet();
@@ -61,8 +62,16 @@ public class BalanceResource {
         return new BalanceResponse(requestId, name, balance, message);
     }
 
+    @GET
+    @Timed
+    @Produces(MediaType.TEXT_HTML)
+    public BalanceView view(@PathParam("name") @NotEmpty String name) {
+        return new BalanceView(get(name));
+    }
+
     @PUT
     @Timed
+    @Produces(MediaType.APPLICATION_JSON)
     public Response put(@PathParam("name") @NotEmpty String name, @QueryParam("balance") @NotEmpty String balance) {
 
         Long balanceVal;

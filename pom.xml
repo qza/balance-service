@@ -52,6 +52,11 @@
             <artifactId>dropwizard-core</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>io.dropwizard</groupId>
+            <artifactId>dropwizard-views-freemarker</artifactId>
+        </dependency>
+
         <!-- Test dependencies -->
 
         <dependency>

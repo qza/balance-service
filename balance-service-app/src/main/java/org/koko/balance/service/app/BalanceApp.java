@@ -1,7 +1,10 @@
 package org.koko.balance.service.app;
 
 import io.dropwizard.Application;
+import io.dropwizard.assets.AssetsBundle;
+import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
+import io.dropwizard.views.ViewBundle;
 import org.koko.balance.service.app.data.BalanceRepository;
 import org.koko.balance.service.app.health.RepositoryHealthCheck;
 import org.koko.balance.service.app.resources.BalanceResource;
@@ -13,6 +16,16 @@ public class BalanceApp extends Application<BalanceAppConfig> {
 
     public static void main(String[] args) throws Exception {
         new BalanceApp().run(args);
+    }
+
+    @Override
+    public void initialize(Bootstrap<BalanceAppConfig> bootstrap) {
+
+        bootstrap.addBundle(new ViewBundle<>());
+
+        bootstrap.addBundle(new AssetsBundle("/assets/css", "/css", null, "css"));
+        bootstrap.addBundle(new AssetsBundle("/assets/js", "/js", null, "js"));
+        bootstrap.addBundle(new AssetsBundle("/assets/fonts", "/fonts", null, "fonts"));
     }
 
     @Override
