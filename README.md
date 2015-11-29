@@ -73,6 +73,39 @@ Content-Length: 236
 </html>
 ```
 
+Generate sample balance log with task
+---
+
+```
+$ curl -X POST http://localhost:8081/tasks/generate?count=10000
+
+generating record 1000
+generating record 2000
+generating record 3000
+generating record 4000
+generating record 5000
+generating record 6000
+generating record 7000
+generating record 8000
+generating record 9000
+generating record 10000
+
+generated balance_log in 3 seconds with size: 0 GB
+```
+
+Stream balance log
+---
+
+```
+$ curl -i http://localhost:8080/balances/log
+
+HTTP/1.1 200 OK
+Content-Type: application/json
+Transfer-Encoding: chunked
+
+...
+```
+
 Check health
 ---
 
