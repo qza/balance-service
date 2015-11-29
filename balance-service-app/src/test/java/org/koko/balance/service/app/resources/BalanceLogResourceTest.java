@@ -17,7 +17,7 @@ import static org.junit.Assert.assertEquals;
  */
 public class BalanceLogResourceTest {
 
-    public static final BalanceLogPath PATH = new BalanceLogPath("src/test/resources/balance_log");
+    public static final BalanceLogPath PATH = new BalanceLogPath("test_balance_log");
 
     @ClassRule
     public static final ResourceTestRule resources = ResourceTestRule.builder()

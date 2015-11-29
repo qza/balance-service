@@ -73,7 +73,7 @@ Content-Length: 236
 </html>
 ```
 
-Generate sample balance log with task
+Generate sample balance_log with task
 ---
 
 ```
@@ -93,7 +93,7 @@ generating record 10000
 generated balance_log in 3 seconds with size: 0 GB
 ```
 
-Stream balance log
+Stream balance_log
 ---
 
 ```

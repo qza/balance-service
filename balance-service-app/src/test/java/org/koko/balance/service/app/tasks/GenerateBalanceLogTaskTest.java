@@ -17,7 +17,7 @@ public class GenerateBalanceLogTaskTest {
 
     @Test
     public void shouldGenerateTestBalanceLogWithCount() throws Exception {
-        BalanceLogPath path = deleteCreate(new BalanceLogPath("src/test/resources/balance_log_1"));
+        BalanceLogPath path = deleteCreate(new BalanceLogPath("test_balance_log_1"));
         GenerateBalanceLogTask task = new GenerateBalanceLogTask(path);
         PrintWriter output = mock(PrintWriter.class);
         ImmutableMultimap<String, String> parameters = ImmutableMultimap.of("count","2000");
@@ -28,7 +28,7 @@ public class GenerateBalanceLogTaskTest {
 
     @Test
     public void shouldGenerateTestBalanceLogWithSize() throws Exception {
-        BalanceLogPath path = deleteCreate(new BalanceLogPath("src/test/resources/balance_log_2"));
+        BalanceLogPath path = deleteCreate(new BalanceLogPath("test_balance_log_2"));
         GenerateBalanceLogTask task = new GenerateBalanceLogTask(path);
         PrintWriter output = mock(PrintWriter.class);
         ImmutableMultimap<String, String> parameters = ImmutableMultimap.of("size","1000");
