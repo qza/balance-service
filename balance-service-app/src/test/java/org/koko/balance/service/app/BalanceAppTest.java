@@ -4,6 +4,7 @@ import static org.mockito.Mockito.*;
 
 import com.codahale.metrics.health.HealthCheckRegistry;
 import io.dropwizard.jersey.setup.JerseyEnvironment;
+import io.dropwizard.setup.AdminEnvironment;
 import io.dropwizard.setup.Environment;
 
 import org.junit.After;
@@ -19,6 +20,7 @@ public class BalanceAppTest {
 
     Environment environment = mock(Environment.class);
     JerseyEnvironment jersey = mock(JerseyEnvironment.class);
+    AdminEnvironment admin = mock(AdminEnvironment.class);
     HealthCheckRegistry healths = mock(HealthCheckRegistry.class);
 
     BalanceApp app = new BalanceApp();
@@ -29,11 +31,12 @@ public class BalanceAppTest {
         config.setBalanceMessageTemplate("Current balance is: %s");
         when(environment.jersey()).thenReturn(jersey);
         when(environment.healthChecks()).thenReturn(healths);
+        when(environment.admin()).thenReturn(admin);
     }
 
     @After
     public void tearDown() throws Exception {
-        reset(environment, jersey);
+        reset(environment, jersey, admin, healths);
     }
 
     @Test

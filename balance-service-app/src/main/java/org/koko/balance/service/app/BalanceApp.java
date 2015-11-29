@@ -5,9 +5,12 @@ import io.dropwizard.assets.AssetsBundle;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import io.dropwizard.views.ViewBundle;
+import org.koko.balance.service.app.data.BalanceLogPath;
 import org.koko.balance.service.app.data.BalanceRepository;
 import org.koko.balance.service.app.health.RepositoryHealthCheck;
+import org.koko.balance.service.app.resources.BalanceLogResource;
 import org.koko.balance.service.app.resources.BalanceResource;
+import org.koko.balance.service.app.tasks.GenerateBalanceLogTask;
 
 /**
  * Balance application
@@ -20,9 +23,7 @@ public class BalanceApp extends Application<BalanceAppConfig> {
 
     @Override
     public void initialize(Bootstrap<BalanceAppConfig> bootstrap) {
-
         bootstrap.addBundle(new ViewBundle<>());
-
         bootstrap.addBundle(new AssetsBundle("/assets/css", "/css", null, "css"));
         bootstrap.addBundle(new AssetsBundle("/assets/js", "/js", null, "js"));
         bootstrap.addBundle(new AssetsBundle("/assets/fonts", "/fonts", null, "fonts"));
@@ -41,8 +42,13 @@ public class BalanceApp extends Application<BalanceAppConfig> {
         RepositoryHealthCheck repositoryHealthCheck = new RepositoryHealthCheck(
                 balanceRepository
         );
-
         environment.healthChecks().register("repository", repositoryHealthCheck);
+
+        BalanceLogPath logPath = new BalanceLogPath();
+
+        environment.jersey().register(new BalanceLogResource(logPath));
+
+        environment.admin().addTask(new GenerateBalanceLogTask(logPath));
     }
 
     @Override

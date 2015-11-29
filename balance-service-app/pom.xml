@@ -14,12 +14,22 @@
     <artifactId>balance-service-app</artifactId>
     <name>balance-service-app</name>
 
+    <properties>
+        <rx.java.version>1.0.1</rx.java.version>
+    </properties>
+
     <dependencies>
 
         <dependency>
             <groupId>org.koko</groupId>
             <artifactId>balance-service-api</artifactId>
             <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>io.reactivex</groupId>
+            <artifactId>rxjava</artifactId>
+            <version>${rx.java.version}</version>
         </dependency>
 
         <dependency>

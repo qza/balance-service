@@ -24,7 +24,7 @@ import java.util.Optional;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
- * Created on 11/28/2015.
+ * Balance resource
  */
 @Path("/balances/{name}")
 public class BalanceResource {
