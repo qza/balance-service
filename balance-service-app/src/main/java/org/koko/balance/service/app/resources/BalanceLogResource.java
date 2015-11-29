@@ -65,8 +65,8 @@ public class BalanceLogResource {
         @Override
         public void write(OutputStream outputStream) throws IOException, WebApplicationException {
             CountDownLatch latch = new CountDownLatch(1);
-            FileObserver fileObserver = new FileObserver(outputStream, latch);
-            fileObservable.subscribe(fileObserver);
+            FileStreamingObserver fileStreamingObserver = new FileStreamingObserver(outputStream, latch);
+            fileObservable.subscribe(fileStreamingObserver);
             try {
                 latch.await();
             } catch (InterruptedException e) {
@@ -75,12 +75,12 @@ public class BalanceLogResource {
         }
     }
 
-    private class FileObserver implements Observer<String> {
+    private class FileStreamingObserver implements Observer<String> {
 
         final OutputStream output;
         final CountDownLatch latch;
 
-        FileObserver(OutputStream output, CountDownLatch latch) {
+        FileStreamingObserver(OutputStream output, CountDownLatch latch) {
             this.output = output;
             this.latch = latch;
         }

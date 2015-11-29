@@ -67,7 +67,7 @@ public class GenerateBalanceLogTask extends Task {
                             new BalanceEvent(
                                     names[random.nextInt(3)],
                                     UUID.randomUUID(),
-                                    random.nextLong() / 1000,
+                                    Math.abs(random.nextLong() / 1000),
                                     BalanceEvent.Type.values()[random.nextInt(2)])));
 
             if (counter >= 1000 && counter % 1000 == 0) {

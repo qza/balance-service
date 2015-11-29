@@ -73,6 +73,20 @@ Content-Length: 236
 </html>
 ```
 
+Sum balances from external services
+---
+
+```
+$ curl -i http://localhost:8080/balances/total/mark
+
+HTTP/1.1 200 OK
+Content-Type: application/json
+Content-Length: 91
+
+{"requestId":1,"name":"mark","balance":11312965561123711,"message":"Total on all accounts"}
+
+```
+
 Generate sample balance_log with task
 ---
 

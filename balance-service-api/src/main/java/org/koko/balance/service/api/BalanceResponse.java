@@ -12,7 +12,7 @@ public class BalanceResponse {
 
     private String name;
 
-    private Long balance;
+    private Long balance = 0L;
 
     @Length(max = 140)
     private String message;
@@ -46,6 +46,10 @@ public class BalanceResponse {
     @JsonProperty
     public String getName() {
         return name;
+    }
+
+    public void addBalance(Long amount) {
+        this.balance += amount;
     }
 
     @Override

@@ -8,6 +8,8 @@ import io.dropwizard.views.ViewBundle;
 import org.koko.balance.service.app.data.BalanceLogPath;
 import org.koko.balance.service.app.data.BalanceRepository;
 import org.koko.balance.service.app.health.RepositoryHealthCheck;
+import org.koko.balance.service.app.resources.BalanceCollectorResource;
+import org.koko.balance.service.app.resources.BalanceExternalResource;
 import org.koko.balance.service.app.resources.BalanceLogResource;
 import org.koko.balance.service.app.resources.BalanceResource;
 import org.koko.balance.service.app.tasks.GenerateBalanceLogTask;
@@ -43,6 +45,10 @@ public class BalanceApp extends Application<BalanceAppConfig> {
                 balanceRepository
         );
         environment.healthChecks().register("repository", repositoryHealthCheck);
+
+        environment.jersey().register(new BalanceExternalResource());
+
+        environment.jersey().register(new BalanceCollectorResource(configuration));
 
         BalanceLogPath logPath = new BalanceLogPath();
 
