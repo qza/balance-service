@@ -2,8 +2,11 @@ package org.koko.balance.service.app;
 
 import io.dropwizard.Configuration;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import io.dropwizard.metrics.graphite.GraphiteReporterFactory;
 import org.hibernate.validator.constraints.NotEmpty;
 
+import javax.validation.constraints.NotNull;
+import java.util.Collections;
 import java.util.Map;
 
 /**
@@ -14,7 +17,11 @@ public class BalanceAppConfig extends Configuration {
     @NotEmpty
     private String balanceMessageTemplate;
 
-    private Map<String, Map<String, String>> views;
+    @NotNull
+    private Map<String, Map<String, String>> views = Collections.emptyMap();
+
+    @NotNull
+    private GraphiteReporterFactory metrics = new GraphiteReporterFactory();
 
     @JsonProperty
     public String getBalanceMessageTemplate() {
@@ -34,5 +41,15 @@ public class BalanceAppConfig extends Configuration {
     @JsonProperty
     public void setViews(Map<String, Map<String, String>> views) {
         this.views = views;
+    }
+
+    @JsonProperty
+    public GraphiteReporterFactory getMetrics() {
+        return metrics;
+    }
+
+    @JsonProperty
+    public void setMetrics(GraphiteReporterFactory metrics) {
+        this.metrics = metrics;
     }
 }

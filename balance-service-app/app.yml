@@ -18,3 +18,6 @@ views:
   .ftl:
     strict_syntax: yes
 
+metrics:
+  type: graphite
+  frequency: 10s
