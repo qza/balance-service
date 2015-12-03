@@ -18,10 +18,7 @@ public class BalanceAppConfig extends Configuration {
     private String balanceMessageTemplate;
 
     @NotEmpty
-    private String bank1BalancePath;
-
-    @NotEmpty
-    private String bank2BalancePath;
+    private String bankUrlTemplate;
 
     @NotNull
     private Map<String, Map<String, String>> views = Collections.emptyMap();
@@ -40,23 +37,13 @@ public class BalanceAppConfig extends Configuration {
     }
 
     @JsonProperty
-    public String getBank1BalancePath() {
-        return bank1BalancePath;
+    public String getBankUrlTemplate() {
+        return bankUrlTemplate;
     }
 
     @JsonProperty
-    public void setBank1BalancePath(String bank1BalancePath) {
-        this.bank1BalancePath = bank1BalancePath;
-    }
-
-    @JsonProperty
-    public String getBank2BalancePath() {
-        return bank2BalancePath;
-    }
-
-    @JsonProperty
-    public void setBank2BalancePath(String bank2BalancePath) {
-        this.bank2BalancePath = bank2BalancePath;
+    public void setBankUrlTemplate(String bankUrlTemplate) {
+        this.bankUrlTemplate = bankUrlTemplate;
     }
 
     @JsonProperty

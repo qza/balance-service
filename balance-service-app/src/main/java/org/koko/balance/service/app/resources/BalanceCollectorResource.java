@@ -4,6 +4,7 @@ import com.codahale.metrics.annotation.Timed;
 
 import org.glassfish.jersey.client.rx.Rx;
 import org.glassfish.jersey.client.rx.RxClient;
+import org.glassfish.jersey.client.rx.RxWebTarget;
 import org.glassfish.jersey.client.rx.rxjava.RxObservable;
 import org.glassfish.jersey.client.rx.rxjava.RxObservableInvoker;
 
@@ -14,27 +15,25 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import rx.Observable;
-import rx.schedulers.Schedulers;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
+import javax.ws.rs.*;
 
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
-import java.util.concurrent.CountDownLatch;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
- * Balance collector resource that aggregates balances from other banks
+ * Balance collector resource for aggregating balances on other accounts
  */
 @Path("/balances/total/{name}")
 public class BalanceCollectorResource {
 
     private static final Logger log = LoggerFactory.getLogger(BalanceCollectorResource.class);
-
-    private final RxClient<RxObservableInvoker> rxClient = Rx.newClient(RxObservableInvoker.class);
 
     private final AtomicLong requestCounter = new AtomicLong();
 
@@ -47,59 +46,90 @@ public class BalanceCollectorResource {
     @GET
     @Timed
     @Produces(MediaType.APPLICATION_JSON)
-    public BalanceResponse balanceTotal(@PathParam("name") String name) {
+    public Response balanceTotal(@PathParam("name") String name) {
 
-        log.info("total balance get request [name:{}]", name);
+        log.debug("total balance get request [name:{}]", name);
 
-        CountDownLatch latch = new CountDownLatch(1);
+        BalanceResponse response = collectBalances(name);
 
-        Observable<BalanceResponse> bank1 = RxObservable.from(rxClient
-                .target(appConfig.getBank1BalancePath()))
-                .resolveTemplate("name", name)
-                .request()
-                .rx()
-                .get(BalanceResponse.class)
-                .onErrorReturn(throwable -> {
-                    log.warn("bank1 error: " + throwable.getMessage());
-                    return new BalanceResponse();
-                });
+        log.debug("total balance request served [name:{}]", name);
 
-        Observable<BalanceResponse> bank2 = RxObservable.from(rxClient
-                .target(appConfig.getBank2BalancePath()))
-                .resolveTemplate("name", name)
-                .request()
-                .rx()
-                .get(BalanceResponse.class)
-                .onErrorReturn(throwable -> {
-                    log.warn("bank2 error: " + throwable.getMessage());
-                    return new BalanceResponse();
-                });
+        return Response.ok().entity(response).build();
+    }
 
-        BalanceResponse balanceResponse = new BalanceResponse(requestCounter.incrementAndGet(), name, 0L, "Total on all accounts");
+    private BalanceResponse collectBalances(String name) {
 
-        Observable.just(balanceResponse)
-                .zipWith(bank1, (response, bank1Response) -> {
-                    response.addBalance(bank1Response.getBalance());
-                    return response;
-                })
-                .zipWith(bank2, (response, bank2Response) -> {
-                    response.addBalance(bank2Response.getBalance());
-                    return response;
-                })
-                .observeOn(Schedulers.io())
-                .subscribe(
-                        response -> log.info("balance collected"),
-                        throwable -> log.error("error collecting balance", throwable),
-                        () -> latch.countDown()
-                );
+        BalanceResponse balanceResponse = new BalanceResponse(
+                requestCounter.incrementAndGet(), name, 0L, "total on all accounts");
 
-        try {
-            latch.await();
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-        }
+        RxClient<RxObservableInvoker> rxClient = Rx.newClient(RxObservableInvoker.class);
+
+        RxWebTarget<RxObservableInvoker> rxWebTarget = RxObservable.from(
+                rxClient.target(appConfig.getBankUrlTemplate())
+        );
+
+        List<Observable<BalanceResponse>> responses = new ArrayList<>(3);
+
+        Arrays.asList("bank1", "bank2", "bank3").forEach(
+                (bank) -> responses.add(rxWebTarget
+                        .resolveTemplate("bank", bank)
+                        .resolveTemplate("name", name)
+                        .request()
+                        .rx()
+                        .get(BalanceResponse.class)
+                        .timeout(5, TimeUnit.SECONDS)
+                        .retryWhen(attempts -> attempts
+                                .zipWith(Observable.range(1, 5), (throwable, i) -> new ThrowableCount(throwable, i))
+                                .flatMap(tc -> {
+                                    boolean shouldRetry = tc.getCount() < 5 && tc.isServerError();
+                                    log.warn("{} error :: {} :: {}", tc.getThrowable().getMessage(), bank,
+                                            shouldRetry ? "retry in " + tc.getCount() + " second(s)" : "call failed");
+                                    return shouldRetry ? Observable.timer(tc.getCount(), TimeUnit.SECONDS)
+                                            : Observable.error(tc.getThrowable());
+                                })
+                        )
+                        .onErrorReturn(throwable -> new BalanceResponse())
+                        .finallyDo(() -> log.info("{} call completed", bank))
+                )
+        );
+
+        balanceResponse =
+                Observable.merge(responses)
+                        .reduce(balanceResponse, (sum, el) -> sum.addBalance(el.getBalance()))
+                        .toBlocking().first();
+
+        log.info("balance collected: " + balanceResponse.getBalance());
 
         return balanceResponse;
     }
+
+    /**
+     * Holding error and count
+     */
+    public static class ThrowableCount {
+
+        private final Throwable throwable;
+        private final int count;
+
+        public ThrowableCount(Throwable throwable, int count) {
+            this.throwable = throwable;
+            this.count = count;
+        }
+
+        public Throwable getThrowable() {
+            return throwable;
+        }
+
+        public int getCount() {
+            return count;
+        }
+
+        public boolean isServerError() {
+            return throwable != null && throwable.getCause() != null &&
+                    (throwable.getCause() instanceof InternalServerErrorException ||
+                            throwable.getCause() instanceof ServiceUnavailableException);
+        }
+    }
+
 
 }

@@ -1,9 +1,5 @@
 balanceMessageTemplate: Current balance is %s
 
-bank1BalancePath: http://localhost:8080/balances/ext/bank1/{name}
-
-bank2BalancePath: http://localhost:8080/balances/ext/bank2/{name}
-
 logging:
 
   level: INFO
@@ -25,3 +21,5 @@ views:
 metrics:
   type: graphite
   frequency: 10s
+
+bankUrlTemplate: http://localhost:8080/balances/ext/{bank}/{name}

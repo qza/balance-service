@@ -4,52 +4,47 @@ import com.codahale.metrics.annotation.Timed;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.koko.balance.service.api.BalanceResponse;
 
+import org.koko.balance.service.app.data.Randomised;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicLong;
 
 /**
- * External sources of balance information
+ * External bank resources. Resource is occasionally not available
  */
 @Path("/balances/ext")
 public class BalanceExternalResource {
 
     private static final Logger log = LoggerFactory.getLogger(BalanceExternalResource.class);
 
-    private final AtomicLong bank1Counter = new AtomicLong();
-    private final AtomicLong bank2Counter = new AtomicLong();
-
     @GET
     @Timed
-    @Path("/bank1/{name}")
+    @Path("/{bank}/{name}")
     @Produces(MediaType.APPLICATION_JSON)
-    public BalanceResponse balanceBank1(@PathParam("name") @NotEmpty String name) {
-        work("bank1 get balance request [name:{}]", name);
-        return new BalanceResponse(bank1Counter.incrementAndGet(), name, Math.abs(new Random().nextLong() / 1000L), "");
-    }
+    public Response balance(@PathParam("bank") @NotEmpty String bank, @PathParam("name") @NotEmpty String name) {
 
-    @GET
-    @Timed
-    @Path("/bank2/{name}")
-    @Produces(MediaType.APPLICATION_JSON)
-    public BalanceResponse balanceBank2(@PathParam("name") @NotEmpty String name) {
-        work("bank2 get balance request [name:{}]", name);
-        return new BalanceResponse(bank2Counter.incrementAndGet(), name, Math.abs(new Random().nextLong() / 1000L), "");
-    }
+        BalanceResponse balanceEntity;
+        Response.Status status = Randomised.httpOkNotAvailable();
 
-    private void work(String message, String... params) {
-        try {
-            log.info(message, params);
-            TimeUnit.SECONDS.sleep(new Random().nextInt(5));
-        } catch (InterruptedException e) {
-            log.error("interrupted work", e);
+        if (status.getFamily().equals(Response.Status.Family.SUCCESSFUL)) {
+            log.info("{} - balance request received [name:{}]", bank, name);
+            try {
+                TimeUnit.SECONDS.sleep(new Random().nextInt(5));
+            } catch (InterruptedException e) {
+                Thread.interrupted();
+            }
+            balanceEntity = new BalanceResponse(0L, name, Math.abs(new Random().nextLong() / 1000L), "ok");
+        } else {
+            balanceEntity = new BalanceResponse(0L, name, 0L, "error occurred");
         }
+
+        return Response.status(status.getStatusCode()).entity(balanceEntity).build();
     }
 
 }

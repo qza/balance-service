@@ -30,8 +30,7 @@ public class BalanceCollectorResourceTest extends JerseyTest {
     @Test
     public void shouldCollectBalances() throws Exception {
 
-        when(appConfig.getBank1BalancePath()).thenReturn("http://localhost:9998/balances/ext/bank1/{name}");
-        when(appConfig.getBank2BalancePath()).thenReturn("http://localhost:9998/balances/ext/bank2/{name}");
+        when(appConfig.getBankUrlTemplate()).thenReturn("http://localhost:9998/balances/ext/{bank}/{name}");
 
         Response response = target("/balances/total/mark").request().get();
         BalanceResponse balanceResponse = response.readEntity(BalanceResponse.class);

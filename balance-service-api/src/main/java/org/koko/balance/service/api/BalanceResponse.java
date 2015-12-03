@@ -3,6 +3,9 @@ package org.koko.balance.service.api;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.hibernate.validator.constraints.Length;
 
+import java.text.NumberFormat;
+import java.util.Locale;
+
 /**
  * Balance response representation
  */
@@ -28,6 +31,10 @@ public class BalanceResponse {
         this.message = message;
     }
 
+    public BalanceResponse addBalance(Long balance) {
+        return new BalanceResponse(this.requestId, this.name, this.balance + balance, this.message);
+    }
+
     @JsonProperty
     public Long getRequestId() {
         return requestId;
@@ -48,10 +55,6 @@ public class BalanceResponse {
         return name;
     }
 
-    public void addBalance(Long amount) {
-        this.balance += amount;
-    }
-
     @Override
     public int hashCode() {
         return this.requestId != null ? this.requestId.hashCode() : 0;
@@ -60,5 +63,10 @@ public class BalanceResponse {
     @Override
     public boolean equals(Object obj) {
         return obj != null && obj instanceof BalanceResponse && ((BalanceResponse) obj).getRequestId().equals(this.requestId);
+    }
+
+    @Override
+    public String toString() {
+        return "name: " + name + ", balance: " + NumberFormat.getCurrencyInstance(Locale.US).format(balance);
     }
 }
