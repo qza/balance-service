@@ -17,6 +17,7 @@
     <properties>
         <rx.java.version>1.0.12</rx.java.version>
         <rx.jersey.version>2.22.1</rx.jersey.version>
+        <akka.version>2.0.2</akka.version>
     </properties>
 
     <dependencies>
@@ -31,6 +32,12 @@
             <groupId>io.reactivex</groupId>
             <artifactId>rxjava</artifactId>
             <version>${rx.java.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.typesafe.akka</groupId>
+            <artifactId>akka-actor</artifactId>
+            <version>${akka.version}</version>
         </dependency>
 
         <dependency>
