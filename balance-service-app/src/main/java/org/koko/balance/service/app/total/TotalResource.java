@@ -44,19 +44,19 @@ public class TotalResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response balanceTotal(@PathParam("name") String name) throws Exception {
 
-        log.debug("total balance akka get request [name:{}]", name);
+        log.info("total balance akka get request [name:{}]", name);
 
-        Future<Object> resultFuture = Patterns.ask(balanceTotalActor, new TotalRequest("mark"), 10000);
+        Future<Object> resultFuture = Patterns.ask(balanceTotalActor, new TotalRequest("mark"), 1000);
 
         Object result = Await.result(resultFuture, Duration.create(10, TimeUnit.SECONDS));
 
-        if(result instanceof TotalResponse) {
-            TotalResponse totalResponse = (TotalResponse) result;
-            log.debug("total balance akka request served [name:{}]", name);
-            return Response.ok().entity(new BalanceResponse(0L, name, totalResponse.getTotal(), "total balance")).build();
+        if(!(result instanceof TotalResponse)) {
+            log.warn("unknown result [result:{}]", result);
+            return Response.serverError().build();
         }
 
-        log.debug("unknown result [result:{}]", result);
-        return Response.serverError().build();
+        TotalResponse totalResponse = (TotalResponse) result;
+        log.debug("total balance akka request served [name:{}]", name);
+        return Response.ok().entity(new BalanceResponse(0L, name, totalResponse.getTotal(), "total balance")).build();
     }
 }

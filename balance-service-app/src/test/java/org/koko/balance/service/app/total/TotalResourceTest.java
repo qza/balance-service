@@ -31,8 +31,8 @@ public class TotalResourceTest extends JerseyTest {
     protected Application configure() {
         ResourceConfig config = new ResourceConfig();
         ActorSystem testSystem = ActorSystem.create("BalanceTotalTestSystem");
-        ActorRef balanceTotalWorker = testSystem.actorOf(new Props(TotalWorker.class));
-        config.registerInstances(new TotalResource(balanceTotalWorker, appConfig), new BalanceExternalResource());
+        ActorRef balanceTotalActor = testSystem.actorOf(new Props(TotalMasterActor.class));
+        config.registerInstances(new TotalResource(balanceTotalActor, appConfig), new BalanceExternalResource());
         return config;
     }
 
@@ -45,6 +45,7 @@ public class TotalResourceTest extends JerseyTest {
         BalanceResponse balanceResponse = response.readEntity(BalanceResponse.class);
 
         assertEquals("mark", balanceResponse.getName());
+        assertEquals(Long.valueOf(3), balanceResponse.getBalance());
     }
 
 }
