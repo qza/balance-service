@@ -7,7 +7,6 @@ import javax.ws.rs.core.Response;
 import org.junit.Test;
 import org.junit.ClassRule;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 /**

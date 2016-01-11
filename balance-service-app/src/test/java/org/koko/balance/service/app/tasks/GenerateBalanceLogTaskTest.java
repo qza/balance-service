@@ -1,7 +1,6 @@
 package org.koko.balance.service.app.tasks;
 
 import com.google.common.collect.ImmutableMultimap;
-import org.junit.Before;
 import org.junit.Test;
 import org.koko.balance.service.app.data.BalanceLogPath;
 
