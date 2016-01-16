@@ -73,7 +73,7 @@ Content-Length: 236
 </html>
 ```
 
-Sum balances from external services
+Sum balances from 3 external services with rx jersey client
 ---
 
 ```
@@ -83,7 +83,21 @@ HTTP/1.1 200 OK
 Content-Type: application/json
 Content-Length: 91
 
-{"requestId":1,"name":"mark","balance":11312965561123711,"message":"Total on all accounts"}
+{"requestId":1,"name":"mark","balance":3,"message":"total on all accounts"}
+
+```
+
+Sum balances from 3 external services with akka and ok http
+---
+
+```
+$ curl -i "http://localhost:8080/balances/total/akka/mark"
+
+HTTP/1.1 200 OK
+Content-Type: application/json
+Content-Length: 67
+
+{"requestId":0,"name":"mark","balance":3,"message":"total balance"}
 
 ```
 
