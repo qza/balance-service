@@ -96,7 +96,7 @@ public class BalanceLogResource {
 
         @Override
         public void onError(Throwable throwable) {
-            log.error("stream error");
+            log.error("stream error", throwable);
         }
 
         @Override
