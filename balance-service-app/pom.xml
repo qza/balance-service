@@ -18,6 +18,7 @@
         <rx.java.version>1.0.12</rx.java.version>
         <rx.jersey.version>2.22.1</rx.jersey.version>
         <akka.version>2.1-M1</akka.version>
+        <okhttp.version>3.0.1</okhttp.version>
     </properties>
 
     <dependencies>
@@ -44,6 +45,12 @@
             <groupId>com.typesafe.akka</groupId>
             <artifactId>akka-testkit</artifactId>
             <version>${akka.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.squareup.okhttp3</groupId>
+            <artifactId>okhttp</artifactId>
+            <version>${okhttp.version}</version>
         </dependency>
 
         <dependency>

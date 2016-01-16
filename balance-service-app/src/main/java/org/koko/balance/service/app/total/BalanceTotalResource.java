@@ -1,6 +1,8 @@
 package org.koko.balance.service.app.total;
 
 import akka.actor.ActorRef;
+import akka.actor.ActorSystem;
+import akka.actor.Props;
 import akka.pattern.Patterns;
 
 import scala.concurrent.Await;
@@ -21,21 +23,24 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 /**
  * Balance total resource delegating to actor system
  */
-@Path("/balances/total/{name}/akka")
+@Path("/balances/total/akka/{name}")
 public class BalanceTotalResource {
 
     private static final Logger log = LoggerFactory.getLogger(BalanceTotalResource.class);
 
-    private final BalanceAppConfig appConfig;
-    private final ActorRef balanceTotalActor;
+    private final Duration timeout = Duration.create(1, TimeUnit.MINUTES);
 
-    public BalanceTotalResource(ActorRef balanceTotalActor, BalanceAppConfig appConfig) {
-        this.balanceTotalActor = balanceTotalActor;
+    private final BalanceAppConfig appConfig;
+    private final ActorRef balanceTotalActorDefault;
+
+    public BalanceTotalResource(ActorRef balanceTotalActorDefault, BalanceAppConfig appConfig) {
+        this.balanceTotalActorDefault = balanceTotalActorDefault;
         this.appConfig = appConfig;
     }
 
@@ -46,11 +51,16 @@ public class BalanceTotalResource {
 
         log.info("total balance akka get request [name:{}]", name);
 
-        Future<Object> resultFuture = Patterns.ask(balanceTotalActor, new BalanceTotalRequest("mark"), 1000);
+        ActorRef balanceTotalActorSystem = Optional.ofNullable(balanceTotalActorDefault)
+                .orElse(ActorSystem.create("balance-total-actor-system").actorOf(
+                        new Props(() -> new BalanceTotalMasterActor(appConfig)))
+                );
 
-        Object result = Await.result(resultFuture, Duration.create(10, TimeUnit.SECONDS));
+        Future<Object> resultFuture = Patterns.ask(balanceTotalActorSystem, new BalanceTotalRequest("mark"), timeout.toMillis());
 
-        if(!(result instanceof BalanceTotalResponse)) {
+        Object result = Await.result(resultFuture, timeout);
+
+        if (!(result instanceof BalanceTotalResponse)) {
             log.warn("unknown result [result:{}]", result);
             return Response.serverError().build();
         }
@@ -59,4 +69,5 @@ public class BalanceTotalResource {
         log.debug("total balance akka request served [name:{}]", name);
         return Response.ok().entity(new BalanceResponse(0L, name, balanceTotalResponse.getTotal(), "total balance")).build();
     }
+
 }

@@ -1,5 +1,8 @@
 package org.koko.balance.service.app;
 
+import akka.actor.ActorRef;
+import akka.actor.ActorSystem;
+import akka.actor.Props;
 import io.dropwizard.Application;
 import io.dropwizard.assets.AssetsBundle;
 import io.dropwizard.setup.Bootstrap;
@@ -13,6 +16,8 @@ import org.koko.balance.service.app.resources.BalanceExternalResource;
 import org.koko.balance.service.app.resources.BalanceLogResource;
 import org.koko.balance.service.app.resources.BalanceResource;
 import org.koko.balance.service.app.tasks.GenerateBalanceLogTask;
+import org.koko.balance.service.app.total.BalanceTotalMasterActor;
+import org.koko.balance.service.app.total.BalanceTotalResource;
 
 /**
  * Balance application
@@ -55,6 +60,9 @@ public class BalanceApp extends Application<BalanceAppConfig> {
         environment.jersey().register(new BalanceLogResource(logPath));
 
         environment.admin().addTask(new GenerateBalanceLogTask(logPath));
+
+        environment.jersey().register(new BalanceTotalResource(null, configuration));
+
     }
 
     @Override

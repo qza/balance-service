@@ -7,23 +7,28 @@ public class BalanceTotalRequest {
 
     private final String name;
 
-    private final String externalResource;
+    private final String bank;
 
     public BalanceTotalRequest(String name) {
         this.name = name;
-        this.externalResource = null;
+        this.bank = null;
     }
 
-    public BalanceTotalRequest(String name, String externalResource) {
+    public BalanceTotalRequest(String name, String bank) {
         this.name = name;
-        this.externalResource = externalResource;
+        this.bank = bank;
     }
 
     public String getName() {
         return name;
     }
 
-    public String getExternalResource() {
-        return externalResource;
+    public String getBank() {
+        return bank;
+    }
+
+    @Override
+    public String toString() {
+        return "BalanceTotalRequest [name: " + name + "] [ bank: " + bank + "]";
     }
 }
