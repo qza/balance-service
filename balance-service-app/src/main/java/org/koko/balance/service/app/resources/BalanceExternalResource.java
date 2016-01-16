@@ -39,8 +39,9 @@ public class BalanceExternalResource {
             } catch (InterruptedException e) {
                 Thread.interrupted();
             }
-            balanceEntity = new BalanceResponse(0L, name, Math.abs(new Random().nextLong() / 1000L), "ok");
+            balanceEntity = new BalanceResponse(0L, name, 1L, "ok");
         } else {
+            log.warn("{} - balance request error [name:{}]", bank, name);
             balanceEntity = new BalanceResponse(0L, name, 0L, "error occurred");
         }
 
