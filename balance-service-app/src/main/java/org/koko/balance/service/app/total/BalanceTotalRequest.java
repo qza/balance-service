@@ -1,20 +1,20 @@
 package org.koko.balance.service.app.total;
 
 /**
- * TotalRequest message
+ * BalanceTotalRequest message
  */
-public class TotalRequest {
+public class BalanceTotalRequest {
 
     private final String name;
 
     private final String externalResource;
 
-    public TotalRequest(String name) {
+    public BalanceTotalRequest(String name) {
         this.name = name;
         this.externalResource = null;
     }
 
-    public TotalRequest(String name, String externalResource) {
+    public BalanceTotalRequest(String name, String externalResource) {
         this.name = name;
         this.externalResource = externalResource;
     }

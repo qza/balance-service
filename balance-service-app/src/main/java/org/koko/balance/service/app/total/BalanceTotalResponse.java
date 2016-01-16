@@ -1,19 +1,19 @@
 package org.koko.balance.service.app.total;
 
 /**
- * TotalResponse message
+ * BalanceTotalResponse message
  */
-public class TotalResponse {
+public class BalanceTotalResponse {
 
-    private final TotalRequest request;
+    private final BalanceTotalRequest request;
     private final Long total;
 
-    public TotalResponse(TotalRequest request, Long total) {
+    public BalanceTotalResponse(BalanceTotalRequest request, Long total) {
         this.request = request;
         this.total = total;
     }
 
-    public TotalRequest getRequest() {
+    public BalanceTotalRequest getRequest() {
         return request;
     }
 

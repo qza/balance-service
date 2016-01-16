@@ -17,18 +17,18 @@ import static akka.actor.SupervisorStrategy.restart;
 /**
  * Balance total master actor collecting balance from workers and restarting worker actors in case of http server errors
  */
-public class TotalMasterActor extends UntypedActor {
+public class BalanceTotalMasterActor extends UntypedActor {
 
     private final List<String> externalResources = Arrays.asList("bank1", "bank2", "bank3");
 
     private final LoggingAdapter log = Logging.getLogger(getContext().system(), this);
 
-    private final ActorRef workerRouter = this.getContext().actorOf(new Props(TotalWorkerActor.class)
+    private final ActorRef workerRouter = this.getContext().actorOf(new Props(BalanceTotalWorkerActor.class)
             .withRouter(new RoundRobinRouter(externalResources.size())), "workerRouter");
 
     private static final SupervisorStrategy strategy = new OneForOneStrategy(
             10, Duration.create(1, TimeUnit.MINUTES), // max 10 restarts in a minute, then stop
-            (t) -> t instanceof TotalWorkerActorException ? restart() : escalate()
+            (t) -> t instanceof BalanceTotalWorkerActorException ? restart() : escalate()
     );
 
     private final List<Long> balances = new ArrayList<>(externalResources.size());
@@ -43,18 +43,18 @@ public class TotalMasterActor extends UntypedActor {
     @Override
     public void onReceive(Object message) throws Exception {
 
-        if (message instanceof TotalRequest) {
+        if (message instanceof BalanceTotalRequest) {
             log.info("total request received");
             listener = getSender();
             externalResources.forEach((el) -> workerRouter.tell(message, getSelf()));
 
-        } else if (message instanceof TotalResponse) {
+        } else if (message instanceof BalanceTotalResponse) {
             log.info("total response received");
-            TotalResponse response = (TotalResponse) message;
+            BalanceTotalResponse response = (BalanceTotalResponse) message;
             balances.add(response.getTotal());
-            if (balances.stream().filter(el -> el != null).count() == 3) {
+            if (balances.stream().filter(el -> el != null).count() == externalResources.size()) {
                 Long total = balances.stream().reduce(0L, (x, y) -> x + y);
-                listener.tell(new TotalResponse(response.getRequest(), total));
+                listener.tell(new BalanceTotalResponse(response.getRequest(), total));
                 log.info("total balance calculated: {}", total);
                 getContext().stop(getSelf());
             }

@@ -27,14 +27,14 @@ import java.util.concurrent.TimeUnit;
  * Balance total resource delegating to actor system
  */
 @Path("/balances/total/{name}/akka")
-public class TotalResource {
+public class BalanceTotalResource {
 
-    private static final Logger log = LoggerFactory.getLogger(TotalResource.class);
+    private static final Logger log = LoggerFactory.getLogger(BalanceTotalResource.class);
 
     private final BalanceAppConfig appConfig;
     private final ActorRef balanceTotalActor;
 
-    public TotalResource(ActorRef balanceTotalActor, BalanceAppConfig appConfig) {
+    public BalanceTotalResource(ActorRef balanceTotalActor, BalanceAppConfig appConfig) {
         this.balanceTotalActor = balanceTotalActor;
         this.appConfig = appConfig;
     }
@@ -46,17 +46,17 @@ public class TotalResource {
 
         log.info("total balance akka get request [name:{}]", name);
 
-        Future<Object> resultFuture = Patterns.ask(balanceTotalActor, new TotalRequest("mark"), 1000);
+        Future<Object> resultFuture = Patterns.ask(balanceTotalActor, new BalanceTotalRequest("mark"), 1000);
 
         Object result = Await.result(resultFuture, Duration.create(10, TimeUnit.SECONDS));
 
-        if(!(result instanceof TotalResponse)) {
+        if(!(result instanceof BalanceTotalResponse)) {
             log.warn("unknown result [result:{}]", result);
             return Response.serverError().build();
         }
 
-        TotalResponse totalResponse = (TotalResponse) result;
+        BalanceTotalResponse balanceTotalResponse = (BalanceTotalResponse) result;
         log.debug("total balance akka request served [name:{}]", name);
-        return Response.ok().entity(new BalanceResponse(0L, name, totalResponse.getTotal(), "total balance")).build();
+        return Response.ok().entity(new BalanceResponse(0L, name, balanceTotalResponse.getTotal(), "total balance")).build();
     }
 }

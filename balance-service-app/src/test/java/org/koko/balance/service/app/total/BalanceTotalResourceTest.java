@@ -3,7 +3,6 @@ package org.koko.balance.service.app.total;
 import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
 import akka.actor.Props;
-import akka.testkit.TestActorRef;
 import org.junit.Test;
 
 import org.glassfish.jersey.server.ResourceConfig;
@@ -21,9 +20,9 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 /**
- * TotalResource test class
+ * BalanceTotalResource test class
  */
-public class TotalResourceTest extends JerseyTest {
+public class BalanceTotalResourceTest extends JerseyTest {
 
     BalanceAppConfig appConfig = mock(BalanceAppConfig.class);
 
@@ -31,8 +30,8 @@ public class TotalResourceTest extends JerseyTest {
     protected Application configure() {
         ResourceConfig config = new ResourceConfig();
         ActorSystem testSystem = ActorSystem.create("BalanceTotalTestSystem");
-        ActorRef balanceTotalActor = testSystem.actorOf(new Props(TotalMasterActor.class));
-        config.registerInstances(new TotalResource(balanceTotalActor, appConfig), new BalanceExternalResource());
+        ActorRef balanceTotalActor = testSystem.actorOf(new Props(BalanceTotalMasterActor.class));
+        config.registerInstances(new BalanceTotalResource(balanceTotalActor, appConfig), new BalanceExternalResource());
         return config;
     }
 
