@@ -44,7 +44,7 @@ public class BalanceCollectorResource {
     }
 
     @GET
-    @Timed
+    @Timed(name = "balance-total-rx-jersey", absolute = true)
     @Produces(MediaType.APPLICATION_JSON)
     public Response balanceTotal(@PathParam("name") String name) {
 

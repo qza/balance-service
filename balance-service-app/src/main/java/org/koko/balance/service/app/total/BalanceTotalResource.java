@@ -45,7 +45,7 @@ public class BalanceTotalResource {
     }
 
     @GET
-    @Timed
+    @Timed(name = "balance-total-akka-okhttp", absolute = true)
     @Produces(MediaType.APPLICATION_JSON)
     public Response balanceTotal(@PathParam("name") String name) throws Exception {
 

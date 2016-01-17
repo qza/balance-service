@@ -147,3 +147,54 @@ Content-Length: 60
 
 {"deadlocks":{"healthy":true},"repository":{"healthy":true}}
 ```
+
+Grab some metrics
+---
+
+```
+$ curl "http://localhost:8081/metrics" | jq -r '.timers["balance-total-akka-okhttp"]'
+
+{
+  "count": 4,
+  "max": 60.025915427,
+  "mean": 13.333207568045573,
+  "min": 3.156668368,
+  "p50": 3.156668368,
+  "p75": 4.463677273,
+  "p95": 60.025915427,
+  "p98": 60.025915427,
+  "p99": 60.025915427,
+  "p999": 60.025915427,
+  "stddev": 21.34829488392641,
+  "m15_rate": 0.0039709127367839065,
+  "m1_rate": 0.0218780142482527,
+  "m5_rate": 0.00966579473263782,
+  "mean_rate": 0.005647938172126785,
+  "duration_units": "seconds",
+  "rate_units": "calls/second"
+}
+
+$ curl "http://localhost:8081/metrics" | jq -r '.timers["balance-total-rx-jersey"]'
+
+{
+  "count": 4,
+  "max": 13.274905018,
+  "mean": 11.48465354252596,
+  "min": 10.270721734,
+  "p50": 11.212324703,
+  "p75": 11.555697009000001,
+  "p95": 13.274905018,
+  "p98": 13.274905018,
+  "p99": 13.274905018,
+  "p999": 13.274905018,
+  "stddev": 1.076564766109133,
+  "m15_rate": 0.004281574782607961,
+  "m1_rate": 0.039395830443575905,
+  "m5_rate": 0.011932396810670546,
+  "mean_rate": 0.005601875789945678,
+  "duration_units": "seconds",
+  "rate_units": "calls/second"
+}
+
+
+```
