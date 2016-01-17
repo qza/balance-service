@@ -35,7 +35,7 @@ public class BalanceTotalResourceTest extends JerseyTest {
 
     @Test
     public void shouldCalculateTotal() throws Exception {
-        Response response = target("/balances/total/akka/mark").request().get();
+        Response response = client().target("http://localhost:9998/balances/total/akka/mark").request().get();
         BalanceResponse balanceResponse = response.readEntity(BalanceResponse.class);
 
         assertEquals("mark", balanceResponse.getName());

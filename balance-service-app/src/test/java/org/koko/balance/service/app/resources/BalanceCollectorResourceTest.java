@@ -32,7 +32,7 @@ public class BalanceCollectorResourceTest extends JerseyTest {
 
         when(appConfig.getBankUrlTemplate()).thenReturn("http://localhost:9998/balances/ext/{bank}/{name}");
 
-        Response response = target("/balances/total/mark").request().get();
+        Response response = client().target("http://localhost:9998/balances/total/mark").request().get();
         BalanceResponse balanceResponse = response.readEntity(BalanceResponse.class);
 
         assertEquals("mark", balanceResponse.getName());
