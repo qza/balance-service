@@ -51,12 +51,12 @@ public class BalanceTotalResource {
 
         log.info("total balance akka get request [name:{}]", name);
 
-        ActorRef balanceTotalActorSystem = Optional.ofNullable(balanceTotalActorDefault)
+        ActorRef balanceTotalActor = Optional.ofNullable(balanceTotalActorDefault)
                 .orElse(ActorSystem.create("balance-total-actor-system").actorOf(
                         new Props(() -> new BalanceTotalMasterActor(appConfig)))
                 );
 
-        Future<Object> resultFuture = Patterns.ask(balanceTotalActorSystem, new BalanceTotalRequest("mark"), timeout.toMillis());
+        Future<Object> resultFuture = Patterns.ask(balanceTotalActor, new BalanceTotalRequest(name), timeout.toMillis());
 
         Object result = Await.result(resultFuture, timeout);
 

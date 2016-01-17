@@ -43,7 +43,7 @@ public class BalanceTotalWorkerActor extends UntypedActor {
             BalanceTotalRequest balanceTotalRequest = (BalanceTotalRequest) message;
 
             Optional.ofNullable(balanceTotalRequest.getBank()).orElseThrow(() ->
-                    new IllegalArgumentException("external resources should be defined")
+                    new IllegalArgumentException("request is missing bank information")
             );
 
             String url = appConfig.getBankUrlTemplate()
@@ -72,7 +72,6 @@ public class BalanceTotalWorkerActor extends UntypedActor {
             } catch (IOException ioex) {
                 throw new BalanceTotalWorkerActorException("other http error", ioex);
             }
-
         }
     }
 

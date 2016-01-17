@@ -1,13 +1,11 @@
 package org.koko.balance.service.app;
 
-import akka.actor.ActorRef;
-import akka.actor.ActorSystem;
-import akka.actor.Props;
 import io.dropwizard.Application;
 import io.dropwizard.assets.AssetsBundle;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import io.dropwizard.views.ViewBundle;
+
 import org.koko.balance.service.app.data.BalanceLogPath;
 import org.koko.balance.service.app.data.BalanceRepository;
 import org.koko.balance.service.app.health.RepositoryHealthCheck;
@@ -16,7 +14,6 @@ import org.koko.balance.service.app.resources.BalanceExternalResource;
 import org.koko.balance.service.app.resources.BalanceLogResource;
 import org.koko.balance.service.app.resources.BalanceResource;
 import org.koko.balance.service.app.tasks.GenerateBalanceLogTask;
-import org.koko.balance.service.app.total.BalanceTotalMasterActor;
 import org.koko.balance.service.app.total.BalanceTotalResource;
 
 /**

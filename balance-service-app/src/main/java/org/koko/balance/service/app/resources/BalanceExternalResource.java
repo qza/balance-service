@@ -34,11 +34,7 @@ public class BalanceExternalResource {
 
         if (status.getFamily().equals(Response.Status.Family.SUCCESSFUL)) {
             log.info("{} - balance request received [name:{}]", bank, name);
-            try {
-                TimeUnit.SECONDS.sleep(new Random().nextInt(5));
-            } catch (InterruptedException e) {
-                Thread.interrupted();
-            }
+            workSome();
             balanceEntity = new BalanceResponse(0L, name, 1L, "ok");
         } else {
             log.warn("{} - balance request error [name:{}]", bank, name);
@@ -46,6 +42,14 @@ public class BalanceExternalResource {
         }
 
         return Response.status(status.getStatusCode()).entity(balanceEntity).build();
+    }
+
+    private void workSome() {
+        try {
+            TimeUnit.SECONDS.sleep(new Random().nextInt(5));
+        } catch (InterruptedException e) {
+            Thread.interrupted();
+        }
     }
 
 }

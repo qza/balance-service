@@ -48,7 +48,7 @@ public class BalanceCollectorResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response balanceTotal(@PathParam("name") String name) {
 
-        log.debug("total balance get request [name:{}]", name);
+        log.info("total balance get request [name:{}]", name);
 
         BalanceResponse response = collectBalances(name);
 
@@ -97,8 +97,6 @@ public class BalanceCollectorResource {
                 Observable.merge(responses)
                         .reduce(balanceResponse, (sum, el) -> sum.addBalance(el.getBalance()))
                         .toBlocking().first();
-
-        log.info("balance collected: " + balanceResponse.getBalance());
 
         return balanceResponse;
     }

@@ -45,9 +45,9 @@ public class BalanceTotalMasterActor extends UntypedActor {
 
         this.configuration = configuration;
 
-        this.client = new OkHttpClient();
-
         this.log = Logging.getLogger(getContext().system(), this);
+
+        this.client = new OkHttpClient().newBuilder().readTimeout(5, TimeUnit.SECONDS).build();
 
         this.externalResources = Arrays.asList("bank1", "bank2", "bank3");
 
@@ -81,7 +81,9 @@ public class BalanceTotalMasterActor extends UntypedActor {
             BalanceTotalRequest request = (BalanceTotalRequest) message;
             log.info("total request received {}", request);
             listener = getSender();
-            externalResources.forEach((el) -> workerRouter.tell(new BalanceTotalRequest(request.getName(), el), getSelf()));
+            externalResources.forEach((el) ->
+                    workerRouter.tell(new BalanceTotalRequest(request.getName(), el), getSelf())
+            );
 
         } else if (message instanceof BalanceTotalResponse) {
             log.info("total response received");
@@ -93,8 +95,9 @@ public class BalanceTotalMasterActor extends UntypedActor {
                 log.info("total balance calculated: {}", total);
                 getContext().stop(getSelf());
             }
-        } else if (message instanceof Throwable) {
-            log.info("throwable received, resending message");
+
+        } else if (message instanceof BalanceTotalWorkerActorException) {
+            log.info("actor restarted :: resending message");
             BalanceTotalWorkerActorException exception = (BalanceTotalWorkerActorException) message;
             workerRouter.tell(exception.getRequest(), getSelf());
         }
