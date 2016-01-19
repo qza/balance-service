@@ -12,19 +12,19 @@ public class Randomised {
     public static Status httpOkNotAvailable() {
         return new Status[]{
                 Status.OK,
+                Status.OK,
                 Status.SERVICE_UNAVAILABLE,
-                Status.SERVICE_UNAVAILABLE,
-                Status.INTERNAL_SERVER_ERROR}[
-                new Random().nextInt(4)];
+                Status.SERVICE_UNAVAILABLE}
+                [new Random().nextInt(4)];
     }
 
     public static Status httpClientServer() {
         return new Status[]{
                 Status.BAD_REQUEST,
-                Status.INTERNAL_SERVER_ERROR,
                 Status.NOT_ACCEPTABLE,
-                Status.SERVICE_UNAVAILABLE}[
-                new Random().nextInt(4)];
+                Status.INTERNAL_SERVER_ERROR,
+                Status.SERVICE_UNAVAILABLE}
+                [new Random().nextInt(4)];
     }
 
 }
