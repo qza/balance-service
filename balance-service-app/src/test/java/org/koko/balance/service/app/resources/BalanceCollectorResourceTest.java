@@ -1,41 +1,43 @@
 package org.koko.balance.service.app.resources;
 
-import org.glassfish.jersey.server.ResourceConfig;
-import org.glassfish.jersey.test.JerseyTest;
-import org.koko.balance.service.api.BalanceResponse;
-import org.koko.balance.service.app.BalanceAppConfig;
+import io.dropwizard.testing.ResourceHelpers;
+import io.dropwizard.testing.junit.DropwizardAppRule;
 
-import javax.ws.rs.core.Application;
-import javax.ws.rs.core.Response;
+import okhttp3.OkHttpClient;
+
+import org.junit.ClassRule;
+
+import org.koko.balance.service.app.BalanceApp;
+import org.koko.balance.service.app.BalanceAppConfig;
 
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.*;
+import java.io.IOException;
+import java.util.concurrent.TimeUnit;
+
+import static org.junit.Assert.*;
 
 /**
  * Balance collector resource test
  */
-public class BalanceCollectorResourceTest extends JerseyTest {
+public class BalanceCollectorResourceTest {
 
-    static BalanceAppConfig appConfig = mock(BalanceAppConfig.class);
+    OkHttpClient client = new OkHttpClient().newBuilder().readTimeout(1, TimeUnit.MINUTES).build();
 
-    @Override
-    protected Application configure() {
-        ResourceConfig config = new ResourceConfig();
-        config.registerInstances(new BalanceCollectorResource(appConfig), new BalanceExternalResource());
-        return config;
-    }
+    @ClassRule
+    public static final DropwizardAppRule<BalanceAppConfig> RULE =
+            new DropwizardAppRule<>(BalanceApp.class, ResourceHelpers.resourceFilePath("app-test.yml"));
 
     @Test
-    public void shouldCollectBalances() throws Exception {
+    public void loginHandlerRedirectsAfterPost() throws IOException {
 
-        when(appConfig.getBankUrlTemplate()).thenReturn("http://localhost:9998/balances/ext/{bank}/{name}");
+        String url = "http://localhost:" + RULE.getLocalPort() + "/balances/total/mark";
 
-        Response response = client().target("http://localhost:9998/balances/total/mark").request().get();
-        BalanceResponse balanceResponse = response.readEntity(BalanceResponse.class);
+        okhttp3.Request request = new okhttp3.Request.Builder().url(url).build();
 
-        assertEquals("mark", balanceResponse.getName());
+        okhttp3.Response response = client.newCall(request).execute();
+
+        assertTrue(response.isSuccessful());
     }
 
 }

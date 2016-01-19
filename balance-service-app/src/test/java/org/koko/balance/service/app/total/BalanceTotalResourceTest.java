@@ -1,45 +1,41 @@
 package org.koko.balance.service.app.total;
 
-import akka.actor.ActorRef;
-import akka.actor.ActorSystem;
-import akka.actor.Props;
+import io.dropwizard.testing.ResourceHelpers;
+import io.dropwizard.testing.junit.DropwizardAppRule;
+
+import okhttp3.OkHttpClient;
+
+import org.junit.ClassRule;
 import org.junit.Test;
 
-import org.glassfish.jersey.server.ResourceConfig;
-import org.glassfish.jersey.test.JerseyTest;
-
-import org.koko.balance.service.api.BalanceResponse;
+import org.koko.balance.service.app.BalanceApp;
 import org.koko.balance.service.app.BalanceAppConfig;
-import org.koko.balance.service.app.resources.BalanceExternalResource;
 
-import javax.ws.rs.core.Application;
-import javax.ws.rs.core.Response;
+import java.util.concurrent.TimeUnit;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * BalanceTotalResource test class
  */
-public class BalanceTotalResourceTest extends JerseyTest {
+public class BalanceTotalResourceTest {
 
-    @Override
-    protected Application configure() {
-        BalanceAppConfig appConfig = new BalanceAppConfig();
-        appConfig.setBankUrlTemplate("http://localhost:9998/balances/ext/{bank}/{name}");
-        ResourceConfig config = new ResourceConfig();
-        ActorSystem testSystem = ActorSystem.create("BalanceTotalTestSystem");
-        ActorRef balanceTotalActor = testSystem.actorOf(new Props(() -> new BalanceTotalMasterActor(appConfig)));
-        config.registerInstances(new BalanceTotalResource(balanceTotalActor, appConfig), new BalanceExternalResource());
-        return config;
-    }
+    OkHttpClient client = new OkHttpClient().newBuilder().readTimeout(1, TimeUnit.MINUTES).build();
+
+    @ClassRule
+    public static final DropwizardAppRule<BalanceAppConfig> RULE =
+            new DropwizardAppRule<>(BalanceApp.class, ResourceHelpers.resourceFilePath("app-test.yml"));
 
     @Test
     public void shouldCalculateTotal() throws Exception {
-        Response response = client().target("http://localhost:9998/balances/total/akka/mark").request().get();
-        BalanceResponse balanceResponse = response.readEntity(BalanceResponse.class);
 
-        assertEquals("mark", balanceResponse.getName());
-        assertEquals(Long.valueOf(3), balanceResponse.getBalance());
+        String url = "http://localhost:" + RULE.getLocalPort() + "/balances/total/akka/mark";
+
+        okhttp3.Request request = new okhttp3.Request.Builder().url(url).build();
+
+        okhttp3.Response response = client.newCall(request).execute();
+
+        assertTrue(response.isSuccessful());
     }
 
 }

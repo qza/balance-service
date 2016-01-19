@@ -1,0 +1,33 @@
+server:
+  applicationConnectors:
+    - type: http
+      port: 9998
+  adminConnectors:
+    - type: http
+      port: 9999
+
+balanceMessageTemplate: Current balance is %s
+
+logging:
+
+  level: INFO
+
+  appenders:
+      - type: console
+      - type: file
+        threshold: INFO
+        logFormat: "%-6level [%d{HH:mm:ss.SSS}] [%t] %logger{5} - %X{code} %msg %n"
+        currentLogFilename: ./log/balance-service.log
+        archivedLogFilenamePattern: ./log/balance-service-%d.log.gz
+        archivedFileCount: 7
+        timeZone: UTC
+
+views:
+  .ftl:
+    strict_syntax: yes
+
+metrics:
+  type: graphite
+  frequency: 10s
+
+bankUrlTemplate: http://localhost:9998/balances/ext/{bank}/{name}
