@@ -4,7 +4,7 @@ Balance service with Dropwizard
 [![Build Status](https://travis-ci.org/qza/balance-service.png?branch=master)](https://travis-ci.org/qza/balance-service)
 [![Coverage Status](https://coveralls.io/repos/qza/balance-service/badge.svg?branch=master&service=github)](https://coveralls.io/github/qza/balance-service?branch=master)
 
-Start application with bundled server
+Start application with bundled jetty
 ---
 
 ```
@@ -73,7 +73,7 @@ Content-Length: 236
 </html>
 ```
 
-Sum balances from 3 external services with rx jersey client
+Sum balances with rx jersey client
 ---
 
 ```
@@ -87,7 +87,7 @@ Content-Length: 91
 
 ```
 
-Sum balances from 3 external services with akka and ok http
+Sum balances with akka actors and ok http
 ---
 
 ```
@@ -152,29 +152,7 @@ Grab some metrics
 ---
 
 ```
-$ curl "http://localhost:8081/metrics" | jq -r '.timers["balance-total-akka-okhttp"]'
-
-{
-  "count": 4,
-  "max": 60.025915427,
-  "mean": 13.333207568045573,
-  "min": 3.156668368,
-  "p50": 3.156668368,
-  "p75": 4.463677273,
-  "p95": 60.025915427,
-  "p98": 60.025915427,
-  "p99": 60.025915427,
-  "p999": 60.025915427,
-  "stddev": 21.34829488392641,
-  "m15_rate": 0.0039709127367839065,
-  "m1_rate": 0.0218780142482527,
-  "m5_rate": 0.00966579473263782,
-  "mean_rate": 0.005647938172126785,
-  "duration_units": "seconds",
-  "rate_units": "calls/second"
-}
-
-$ curl "http://localhost:8081/metrics" | jq -r '.timers["balance-total-rx-jersey"]'
+$ curl http://localhost:8081/metrics | jq -r '.timers["balance-total-rx-jersey"]'
 
 {
   "count": 4,
@@ -196,5 +174,25 @@ $ curl "http://localhost:8081/metrics" | jq -r '.timers["balance-total-rx-jersey
   "rate_units": "calls/second"
 }
 
+$ curl http://localhost:8081/metrics | jq -r '.timers["balance-total-akka-okhttp"]'
 
+{
+  "count": 4,
+  "max": 60.025915427,
+  "mean": 13.333207568045573,
+  "min": 3.156668368,
+  "p50": 3.156668368,
+  "p75": 4.463677273,
+  "p95": 60.025915427,
+  "p98": 60.025915427,
+  "p99": 60.025915427,
+  "p999": 60.025915427,
+  "stddev": 21.34829488392641,
+  "m15_rate": 0.0039709127367839065,
+  "m1_rate": 0.0218780142482527,
+  "m5_rate": 0.00966579473263782,
+  "mean_rate": 0.005647938172126785,
+  "duration_units": "seconds",
+  "rate_units": "calls/second"
+}
 ```
